@@ -14,8 +14,8 @@ GAME_COLORS = [GREEN, MAGENTA, CYAN]
 gravitational_constant = 6.67408E-11
 FPS = 30
 day=60*60*24
-dt=0.01*day/FPS
-#dt=1/FPS
+#dt=0.01*day/FPS
+dt=100/FPS
 k=10**7
 class Ball:
     def __init__(self,screen: pygame.Surface, x, y,m):
@@ -101,8 +101,7 @@ class Sputnic(Ball):
         self.vx=vx
         self.type='sputnic'
  
-        n=10
-        N=8
+        n=6
         dr=self.real_r/n
         p=self.m/(4/3*math.pi*(self.real_r**3))
         M=0
@@ -110,6 +109,7 @@ class Sputnic(Ball):
             r=dr*i
             dm=4*math.pi*r*((R**2-r**2)**0.5)*p*dr
             M+=dm
+            N=int(math.pi*r/dr)
             for j in range(N):
                 f=2*math.pi*j/N
                 X=r*math.cos(f)
@@ -130,7 +130,7 @@ class Sputnic(Ball):
                 i.screen,
                 i.color,
                 (i.x / k, i.y / k),
-                1*i.real_r / k
+                5*i.real_r / k
             )
 
 
