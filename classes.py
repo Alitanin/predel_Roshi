@@ -14,7 +14,7 @@ GAME_COLORS = [GREEN, MAGENTA, CYAN]
 gravitational_constant = 6.67408E-11
 FPS = 30
 day=60*60*24
-dt=0.1*day/FPS
+dt=0.01*day/FPS
 #dt=1/FPS
 k=10**7
 class Ball:
@@ -57,23 +57,29 @@ class Ball:
         self.fx=0
         self.fy=0
         for obj in planets:
-            if obj != self and self.type!='sputnic'and obj.type!='sputnic':
-                r = ((obj.x - self.x)**2 + (self.y - obj.y)**2)**0.5
-                self.fx -= ((gravitational_constant*self.m*obj.m)/(r**2))*((self.x - obj.x)/r)
-                self.fy -= ((gravitational_constant*self.m*obj.m)/(r**2)) *((self.y - obj.y)/r)
-                print(r)
-                if r<100:
-                    print(type(self),type(obj))
+            if obj != self:
+                if obj.type=='sputnic':
+                    self.gravitation(obj.fragments)
+                else:
+                    r = ((obj.x - self.x)**2 + (self.y - obj.y)**2)**0.5
+                    if r==0:
+                        print(self,obj)
+                    self.fx -= ((gravitational_constant*self.m*obj.m)/(r**2))*((self.x - obj.x)/r)
+                    self.fy -= ((gravitational_constant*self.m*obj.m)/(r**2)) *((self.y - obj.y)/r)
+
+
     def Vander_force(self,planets):
         for obj in planets:
-            Vander_constant = (gravitational_constant*self.m*obj.m)*(obj.real_r+self.real_r)**6
-            if obj != self and self.type!='sputnic'and obj.type!='sputnic':
-                r = ((obj.x - self.x)**2 + (self.y - obj.y)**2)**0.5
-                self.fx += ((Vander_constant)/(r**8))*((self.x - obj.x)/r)
-                self.fy += ((Vander_constant)/(r**8)) *((self.y - obj.y)/r)
-                print(r,self.fx*10**-26)
-                if r<100:
-                    print(type(self),type(obj))
+            if obj != self:
+                if obj.type=='sputnic':
+                    self.Vander_force(obj.fragments)
+                else:
+                    Vander_constant = (gravitational_constant * self.m * obj.m) * (obj.real_r + self.real_r) ** 6
+                    r = ((obj.x - self.x)**2 + (self.y - obj.y)**2)**0.5
+                    if r==0:
+                        print(self,obj)
+                    self.fx += ((Vander_constant)/(r**8))*((self.x - obj.x)/r)
+                    self.fy += ((Vander_constant)/(r**8)) *((self.y - obj.y)/r)
 
 
 
@@ -82,25 +88,10 @@ class Ball:
             self.screen,
             self.color,
             (self.x/k, self.y/k),
-            50*self.real_r/k
+            10*self.real_r/k
         )
 
-    def hittest(self, obj):
-        """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
 
-        Args:
-            obj: Обьект, с которым проверяется столкновение.
-        Returns:
-            Возвращает True в случае столкновения мяча и цели. В противном случае возвращает False.
-        """
-
-        X=((self.x-obj.x)**2+(self.y-obj.y)**2)**0.5<=self.r+obj.r
-
-        if X:
-            return True
-
-        else:
-            return False
 class Sputnic(Ball):
     def __init__(self,screen: pygame.Surface, x, y,m,R,vx):
         super().__init__(screen, x, y,m)
@@ -110,8 +101,8 @@ class Sputnic(Ball):
         self.vx=vx
         self.type='sputnic'
  
-        n=20
-        N=25
+        n=10
+        N=8
         dr=self.real_r/n
         p=self.m/(4/3*math.pi*(self.real_r**3))
         M=0
@@ -125,13 +116,13 @@ class Sputnic(Ball):
                 Y=r*math.sin(f)
                 fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N)
                 fragment.vx = self.vx
-                fragment.real_r = self.real_r / n
+                fragment.real_r = dr*((n+1)/(2*n))
                 self.fragments.append(fragment)
-            fragment = Ball(self.screen, x=(self.x) / k, y=(self.y) / k, m=self.m-M)
-            fragment.vx = self.vx
-            fragment.real_r=self.real_r/n
-            self.fragments.append(fragment)
-        print((self.m-M)/10**18,M/self.m)
+        fragment = Ball(self.screen, x=(self.x) / k, y=(self.y) / k, m=self.m-M)
+        fragment.vx = self.vx
+        fragment.real_r=dr*((n+1)/(2*n))
+        self.fragments.append(fragment)
+
 
     def draw(self):
         for i in self.fragments:
@@ -139,7 +130,7 @@ class Sputnic(Ball):
                 i.screen,
                 i.color,
                 (i.x / k, i.y / k),
-                10*i.real_r / k
+                1*i.real_r / k
             )
 
 
@@ -150,6 +141,10 @@ class Sputnic(Ball):
     def gravitation(self, planets):
         for i in self.fragments:
             i.gravitation(planets)
+
+    def Vander_force(self, planets):
+        for i in self.fragments:
+            i.Vander_force(planets)
 
 
 
