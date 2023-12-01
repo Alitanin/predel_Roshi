@@ -14,9 +14,9 @@ balls = []
 
 clock = pygame.time.Clock()
 
-sputnic = Sputnic(screen,R=58*10**6,x=400,y=110,m=2*10**26,r=10,vx=4*10**4)
+sputnic = Sputnic(screen,R=58*10**6,x=400,y=110,m=2*10**26,vx=4*10**4)
 balls.append(sputnic)
-center = Ball(screen,x=400,y=300,m=10**29,r=6)
+center = Ball(screen,x=400,y=300,m=10**29)
 center.color=YELLOW
 balls.append(center)
 

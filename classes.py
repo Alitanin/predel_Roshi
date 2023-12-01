@@ -18,7 +18,7 @@ dt=0.1*day/FPS
 #dt=1/FPS
 k=10**7
 class Ball:
-    def __init__(self,screen: pygame.Surface, x, y,m,r):
+    def __init__(self,screen: pygame.Surface, x, y,m):
         """ Конструктор класса ball
 
         Args:
@@ -29,7 +29,6 @@ class Ball:
         self.x = x*k
         self.y = y*k
         self.m = m
-        self.r = r
         self.vx = 0
         self.vy = 0
         self.ax = 0
@@ -103,25 +102,14 @@ class Ball:
         else:
             return False
 class Sputnic(Ball):
-    def __init__(self,screen: pygame.Surface, x, y,m,r,R,vx):
-        super().__init__(screen, x, y,m,r)
+    def __init__(self,screen: pygame.Surface, x, y,m,R,vx):
+        super().__init__(screen, x, y,m)
         self.color=BLACK
         self.fragments=[]
         self.real_r=R
         self.vx=vx
         self.type='sputnic'
-        '''
-        num=self.real_r /5
-        for X in np.arange(-self.real_r,self.real_r+num/2,num):
-            for Y in np.arange(-self.real_r, self.real_r+num/2, num):
-                if (X**2+Y**2)<=self.real_r**2:
-                    fragment=Ball(self.screen,x=(self.x+X)/k,y=(self.y+Y)/k,m=0,r=6)
-                    fragment.vx=self.vx
-                    self.fragments.append(fragment)
-        for i in self.fragments:
-            i.m=self.m/(len(self.fragments))
-        print(len(self.fragments))
-        '''
+ 
         n=20
         N=25
         dr=self.real_r/n
@@ -135,11 +123,11 @@ class Sputnic(Ball):
                 f=2*math.pi*j/N
                 X=r*math.cos(f)
                 Y=r*math.sin(f)
-                fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N, r=3)
+                fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N)
                 fragment.vx = self.vx
                 fragment.real_r = self.real_r / n
                 self.fragments.append(fragment)
-            fragment = Ball(self.screen, x=(self.x) / k, y=(self.y) / k, m=self.m-M, r=3)
+            fragment = Ball(self.screen, x=(self.x) / k, y=(self.y) / k, m=self.m-M)
             fragment.vx = self.vx
             fragment.real_r=self.real_r/n
             self.fragments.append(fragment)
