@@ -10,7 +10,6 @@ CYAN = 0x00FFCC
 BLACK = (0, 0, 0)
 WHITE = 0xFFFFFF
 GREY = 0x7D7D7D
-GAME_COLORS = [GREEN, MAGENTA, CYAN]
 gravitational_constant = 6.67408E-11
 FPS = 30
 day=60*60*24
@@ -46,7 +45,7 @@ class Ball:
         self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
         и стен по краям окна (размер окна 800х600).
         """
-        # FIXME
+        
         self.ax = self.fx / self.m
         self.ay = self.fy / self.m
         self.vx += self.ax*dt
@@ -59,7 +58,11 @@ class Ball:
         for obj in planets:
             if obj != self:
                 if obj.type=='sputnic':
+                    Fx=self.fx 
+                    Fy=self.fy 
                     self.gravitation(obj.fragments)
+                    self.fx +=Fx
+                    self.fy +=Fy
                 else:
                     r = ((obj.x - self.x)**2 + (self.y - obj.y)**2)**0.5
                     if r==0:
@@ -122,6 +125,7 @@ class Sputnic(Ball):
         fragment.vx = self.vx
         fragment.real_r=dr*((n+1)/(2*n))
         self.fragments.append(fragment)
+        print(len(self.fragments))
 
 
     def draw(self):

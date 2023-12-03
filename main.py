@@ -13,8 +13,9 @@ bullet = 0
 balls = []
 
 clock = pygame.time.Clock()
-
-sputnic = Sputnic(screen,R=58*10**6,x=400,y=150,m=2*10**26,vx=4.2*10**4)
+#sputnic1 = Sputnic(screen,R=58*10**6,x=400,y=200,m=5*10**28,vx=-4*10**4)
+#balls.append(sputnic1)
+sputnic = Sputnic(screen,R=58*10**6,x=400,y=150,m=2*10**26,vx=4.5*10**4)
 balls.append(sputnic)
 
 center = Ball(screen,x=400,y=300,m=10**29)
@@ -42,6 +43,7 @@ while not finished:
             b.Vander_force(balls)
         for b in balls:
             b.move()
+
 
 
 
