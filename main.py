@@ -1,8 +1,7 @@
 import math
 from random import choice
 import pygame
-from classes import *
-
+from grafs import *
 
 
 WIDTH = 800
@@ -13,19 +12,18 @@ bullet = 0
 balls = []
 
 clock = pygame.time.Clock()
-#sputnic1 = Sputnic(screen,R=58*10**6,x=400,y=200,m=5*10**28,vx=-4*10**4)
-#balls.append(sputnic1)
-sputnic = Sputnic(screen,R=58*10**6,x=400,y=150,m=2*10**26,vx=4.5*10**4)
+
+sputnic = Sputnic(screen,R=58*10**6,x=400,y=150,m=2*10**26,vx=5.6*10**4)
 balls.append(sputnic)
 
-center = Ball(screen,x=400,y=300,m=10**29)
+center = Ball(screen,x=400,y=300,m=10**29,R=7*10**6)
 center.color=YELLOW
+center.center=1
 balls.append(center)
 
 finished = False
-
+time = 0
 while not finished:
-
 
     screen.fill(WHITE)
     clock.tick(FPS)
@@ -33,6 +31,7 @@ while not finished:
         if event.type == pygame.QUIT:
             finished = True
     for i in range(10 ** 3):
+        time += dt
         screen.fill(WHITE)
         for b in balls:
             b.draw()
@@ -43,9 +42,10 @@ while not finished:
             b.Vander_force(balls)
         for b in balls:
             b.move()
-
-
+            b.info(time,balls)
 
 
 
 pygame.quit()
+for b in balls:
+    draw_graf(b)

@@ -14,10 +14,10 @@ gravitational_constant = 6.67408E-11
 FPS = 30
 day=60*60*24
 #dt=0.01*day/FPS
-dt=100/FPS
+dt=75/FPS
 k=10**7
 class Ball:
-    def __init__(self,screen: pygame.Surface, x, y,m):
+    def __init__(self,screen: pygame.Surface, x, y,m,R):
         """ Конструктор класса ball
 
         Args:
@@ -36,7 +36,10 @@ class Ball:
         self.fx = 0
         self.fy = 0
         self.type='ball'
-        self.real_r=7*10**6
+        self.real_r=R
+        self.center=0
+        self.ox = []
+        self.oy = []
 
     def move(self):
         """Переместить мяч по прошествии единицы времени.
@@ -91,16 +94,24 @@ class Ball:
             self.screen,
             self.color,
             (self.x/k, self.y/k),
-            10*self.real_r/k
+            7*self.real_r/k
         )
+    def info(self,time,objs):
+        for obj in objs:
+            if self.type == 'sputnic':
+                self = self.main
+            if self.center!=1 and obj.center==1:
+                r = ((obj.x - self.x) ** 2 + (self.y - obj.y) ** 2) ** 0.5
+                self.ox.append(time)
+                self.oy.append(r)
+            
 
 
 class Sputnic(Ball):
     def __init__(self,screen: pygame.Surface, x, y,m,R,vx):
-        super().__init__(screen, x, y,m)
+        super().__init__(screen, x, y,m,R)
         self.color=BLACK
         self.fragments=[]
-        self.real_r=R
         self.vx=vx
         self.type='sputnic'
  
@@ -117,14 +128,13 @@ class Sputnic(Ball):
                 f=2*math.pi*j/N
                 X=r*math.cos(f)
                 Y=r*math.sin(f)
-                fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N)
+                fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N,R=dr*((n+1)/(2*n)))
                 fragment.vx = self.vx
-                fragment.real_r = dr*((n+1)/(2*n))
                 self.fragments.append(fragment)
-        fragment = Ball(self.screen, x=(self.x) / k, y=(self.y) / k, m=self.m-M)
+        fragment = Ball(self.screen, x=(self.x) / k, y=(self.y) / k, m=self.m-M,R=dr*((n+1)/(2*n)))
         fragment.vx = self.vx
-        fragment.real_r=dr*((n+1)/(2*n))
         self.fragments.append(fragment)
+        self.main=fragment
         print(len(self.fragments))
 
 
@@ -134,7 +144,7 @@ class Sputnic(Ball):
                 i.screen,
                 i.color,
                 (i.x / k, i.y / k),
-                5*i.real_r / k
+                4.5*i.real_r / k
             )
 
 
