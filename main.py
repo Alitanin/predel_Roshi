@@ -47,13 +47,14 @@ while not finished:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             button_point.event(button_point.click(event),time)
-    for i in range(10 ** 3):
+    screen.fill(BLACK)
+    for b in balls:
+        b.draw()
+    button_point.draw()
+    pygame.display.update()
+    for i in range(10 ** 2):
         time += dt
-        screen.fill(BLACK)
-        for b in balls:
-            b.draw()
-        button_point.draw()
-        pygame.display.update()
+    
 
         for b in balls:
             b.gravitation(balls)
