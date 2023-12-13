@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 import math
 RED = 0xFF0000
-BLUE = 0x0000FF
+BLUE = 0x0050FF
 YELLOW = 0xFFC91F
 GREEN = 0x00FF00
 MAGENTA = 0xFF03B8
