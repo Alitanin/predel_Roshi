@@ -10,7 +10,7 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 finished = False
-but_start = Button_ON(screen,400,500,50,30,'start',CYAN)
+but_start = Button_ON(screen, 400, 500, 50, 30, 'start', CYAN)
 while not finished:
     screen.fill(BLACK)
     clock.tick(FPS)
@@ -26,13 +26,13 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 bullet = 0
 balls = []
-button_point=Button_Point(screen,100,600,90,24,'make mark',CYAN)
+button_point = Button_Point(screen, 100, 600, 90, 24, 'make mark', CYAN)
 clock = pygame.time.Clock()
 
-sputnic = Sputnic(screen,R=58*10**6,x=400,y=150,m=2*10**26,vx=4.8*10**4)
+sputnic = Sputnic(screen, R=58*10**6, x=400, y=150, m=2*10**26, vx=4.8*10**4)
 balls.append(sputnic)
 
-center = Ball(screen,x=400, y=300, m=10**29, R=7*10**6)
+center = Ball(screen, x=400, y=300, m=10**29, R=7*10**6)
 center.color = YELLOW
 center.center = 1
 balls.append(center)
@@ -46,7 +46,7 @@ while not finished:
         if event.type == pygame.QUIT:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            button_point.event(button_point.click(event),time)
+            button_point.event(button_point.click(event), time)
     screen.fill(BLACK)
     for b in balls:
         b.draw()
@@ -54,18 +54,12 @@ while not finished:
     pygame.display.update()
     for i in range(10 ** 2):
         time += dt
-    
-
         for b in balls:
             b.gravitation(balls)
             b.Vander_force(balls)
         for b in balls:
             b.move()
-            b.info(time,balls)
-
-
-
-
+            b.info(time, balls)
 pygame.quit()
 for b in balls:
-    draw_graf(b,points)
+    draw_graf(b, points)

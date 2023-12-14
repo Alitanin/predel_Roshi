@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 import math
 RED = 0xFF0000
-BLUE = 0x0050FF
+BLUE = (152, 137, 234)
 YELLOW = 0xFFC91F
 GREEN = 0x00FF00
 MAGENTA = 0xFF03B8
@@ -12,12 +12,13 @@ WHITE = 0xFFFFFF
 GREY = 0x7D7D7D
 gravitational_constant = 6.67408E-11
 FPS = 30
-day=60*60*24
-#dt=0.01*day/FPS
-dt=75/FPS
-k=10**7
+day = 60*60*24
+dt = 75/FPS
+k = 10**7
+
+
 class Ball:
-    def __init__(self,screen: pygame.Surface, x, y,m,R):
+    def __init__(self, screen: pygame.Surface, x, y, m, R):
         """ Конструктор класса ball
 
         Args:
@@ -35,9 +36,9 @@ class Ball:
         self.color = BLUE
         self.fx = 0
         self.fy = 0
-        self.type='ball'
-        self.real_r=R
-        self.center=0
+        self.type = 'ball'
+        self.real_r = R
+        self.center = 0
         self.ox = []
         self.oy = []
 
@@ -55,88 +56,102 @@ class Ball:
         self.vy += self.ay*dt
         self.x += self.vx*dt
         self.y += self.vy*dt
-    def gravitation(self,planets):
-        self.fx=0
-        self.fy=0
+
+    def gravitation(self, planets):
+        """Сила гравитации, действущая на мяч.
+
+                Метод описывает силу гравитации, действущей на мяч со стороны других тел в planets в данный момент. То есть, обновляет значения
+                self.fx и self.fy с учетом собственной масс self.m, расстояния r до другого тела массой obj.m.
+                Расстояние r считается из собственных координат self.x, self.y и координат других тел obj.x, obj.y.
+                """
+
+        self.fx = 0
+        self.fy = 0
         for obj in planets:
             if obj != self:
-                if obj.type=='sputnic':
-                    Fx=self.fx 
-                    Fy=self.fy 
+                if obj.type == 'sputnic':
+                    Fx = self.fx
+                    Fy = self.fy
                     self.gravitation(obj.fragments)
-                    self.fx +=Fx
-                    self.fy +=Fy
+                    self.fx += Fx
+                    self.fy += Fy
                 else:
                     r = ((obj.x - self.x)**2 + (self.y - obj.y)**2)**0.5
-                    if r==0:
-                        print(self,obj)
-                    self.fx -= ((gravitational_constant*self.m*obj.m)/(r**2))*((self.x - obj.x)/r)
-                    self.fy -= ((gravitational_constant*self.m*obj.m)/(r**2)) *((self.y - obj.y)/r)
+                    if r == 0:
+                        print(self, obj)
+                    self.fx -= ((gravitational_constant*self.m*obj.m)/(r**2)) * ((self.x - obj.x)/r)
+                    self.fy -= ((gravitational_constant*self.m*obj.m)/(r**2)) * ((self.y - obj.y)/r)
 
+    def Vander_force(self, planets):
+        """Сила упругости, действущая на мяч.
 
-    def Vander_force(self,planets):
+                        Метод описывает силу упругости, действущей на мяч со стороны других тел в planets в данный момент. То есть, обновляет значения
+                        self.fx и self.fy с учетом собственной масс self.m, расстояния r до другого тела массой obj.m.
+                        ! ВАЖНО ! Добавляет силу к уже посчитанной силе гравитации!
+                        Расстояние r считается из собственных координат self.x, self.y и координат других тел obj.x, obj.y.
+                        """
         for obj in planets:
             if obj != self:
-                if obj.type=='sputnic':
+                if obj.type == 'sputnic':
                     self.Vander_force(obj.fragments)
                 else:
                     Vander_constant = (gravitational_constant * self.m * obj.m) * (obj.real_r + self.real_r) ** 6
                     r = ((obj.x - self.x)**2 + (self.y - obj.y)**2)**0.5
-                    if r==0:
-                        print(self,obj)
-                    self.fx += ((Vander_constant)/(r**8))*((self.x - obj.x)/r)
-                    self.fy += ((Vander_constant)/(r**8)) *((self.y - obj.y)/r)
-
-
+                    if r == 0:
+                        print(self, obj)
+                    self.fx += (Vander_constant/(r**8)) * ((self.x - obj.x)/r)
+                    self.fy += (Vander_constant/(r**8)) * ((self.y - obj.y)/r)
 
     def draw(self):
+        
         pygame.draw.circle(
             self.screen,
             self.color,
             (self.x/k, self.y/k),
             7*self.real_r/k
         )
-    def info(self,time,objs):
+
+    def info(self, time, objs):
+        '''Добавляет информацию о расстоянии тела (или его центра, если тело - спутник) до выбранного центром тела
+        в списки self.ox и self.oy для построения графиков'''
         for obj in objs:
             if self.type == 'sputnic':
                 self = self.main
-            if self.center!=1 and obj.center==1:
+            if self.center != 1 and obj.center == 1:
                 r = ((obj.x - self.x) ** 2 + (self.y - obj.y) ** 2) ** 0.5
                 self.ox.append(time)
                 self.oy.append(r)
             
 
-
 class Sputnic(Ball):
-    def __init__(self,screen: pygame.Surface, x, y,m,R,vx):
-        super().__init__(screen, x, y,m,R)
-        self.color=BLACK
-        self.fragments=[]
-        self.vx=vx
-        self.type='sputnic'
+    def __init__(self, screen: pygame.Surface, x, y, m, R, vx):
+        super().__init__(screen, x, y, m, R)
+        self.color = BLACK
+        self.fragments = []
+        self.vx = vx
+        self.type = 'sputnic'
  
-        n=6
-        dr=self.real_r/n
-        p=self.m/(4/3*math.pi*(self.real_r**3))
-        M=0
-        for i in range(1,n):
-            r=dr*i
-            dm=4*math.pi*r*((R**2-r**2)**0.5)*p*dr
-            M+=dm
-            N=int(math.pi*r/dr)
+        n = 6
+        dr = self.real_r/n
+        p = self.m/(4/3*math.pi*(self.real_r**3))
+        M = 0
+        for i in range(1, n):
+            r = dr*i
+            dm = 4*math.pi*r*((R**2-r**2)**0.5)*p*dr
+            M += dm
+            N = int(math.pi*r/dr)
             for j in range(N):
-                f=2*math.pi*j/N
-                X=r*math.cos(f)
-                Y=r*math.sin(f)
-                fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N,R=dr*((n+1)/(2*n)))
+                f = 2*math.pi*j/N
+                X = r*math.cos(f)
+                Y = r*math.sin(f)
+                fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N, R=dr*((n+1)/(2*n)))
                 fragment.vx = self.vx
                 self.fragments.append(fragment)
-        fragment = Ball(self.screen, x=(self.x) / k, y=(self.y) / k, m=self.m-M,R=dr*((n+1)/(2*n)))
+        fragment = Ball(self.screen, x=self.x / k, y=self.y / k, m=self.m-M, R=dr*((n+1)/(2*n)))
         fragment.vx = self.vx
         self.fragments.append(fragment)
-        self.main=fragment
+        self.main = fragment
         print(len(self.fragments))
-
 
     def draw(self):
         for i in self.fragments:
@@ -146,7 +161,6 @@ class Sputnic(Ball):
                 (i.x / k, i.y / k),
                 4.5*i.real_r / k
             )
-
 
     def move(self):
         for i in self.fragments:
@@ -159,13 +173,3 @@ class Sputnic(Ball):
     def Vander_force(self, planets):
         for i in self.fragments:
             i.Vander_force(planets)
-
-
-
-
-
-
-
-
-
-
