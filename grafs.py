@@ -11,8 +11,9 @@ def draw_graf(obj, points):
         gr = plt.plot(obj.ox, obj.oy)
         for i in points:
             plt.plot([i for q in range(len(obj.oy)+1)], obj.oy+[min(obj.oy)-0.05*(max(obj.oy)-min(obj.oy))], color='g')
-        plt.xlabel('time')
-        plt.ylabel('distant')
-        plt.legend(['relative min distant '+str(min(obj.oy)/R)])
+        plt.xlabel('time, с')
+        plt.ylabel('distant, м')
+        #plt.legend(['relative min distant '+str(round(min(obj.oy)/R,2))+'\n'+'min distant '+str(round(min(obj.oy)/10**9,3)) +'*10^9 м'])
+        plt.legend(['min distant '+str(round(min(obj.oy)/10**9,3)) +'*10^9 м'])
         plt.show()
     
