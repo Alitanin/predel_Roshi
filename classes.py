@@ -4,7 +4,7 @@ import math
 RED = 0xFF0000
 BLUE = (152, 137, 234)
 YELLOW = 0xFFC91F
-GREEN = 0x00FF00
+GREEN = 0xFF2AE8CB
 MAGENTA = 0xFF03B8
 CYAN = 0x00FFCC
 BLACK = (0, 0, 0)
@@ -13,8 +13,8 @@ GREY = 0x7D7D7D
 gravitational_constant = 6.67408E-11
 FPS = 30
 day = 60*60*24
-dt = 75/FPS
-k = 10**7
+dt = 1/FPS
+k = 10**5
 
 
 class Ball:
@@ -108,7 +108,7 @@ class Ball:
             self.screen,
             self.color,
             (self.x/k, self.y/k),
-            7*self.real_r/k
+            self.real_r/k
         )
 
     def info(self, time, objs):
@@ -141,7 +141,7 @@ class Sputnic(Ball):
             M += dm
             N = int(math.pi*r/dr)
             for j in range(N):
-                f = 2*math.pi*j/N
+                f = 2*math.pi*j/N + 3*N
                 X = r*math.cos(f)
                 Y = r*math.sin(f)
                 fragment = Ball(self.screen, x=(self.x + X) / k, y=(self.y + Y) / k, m=dm/N, R=dr*((n+1)/(2*n)))
@@ -159,7 +159,7 @@ class Sputnic(Ball):
                 i.screen,
                 i.color,
                 (i.x / k, i.y / k),
-                4.5*i.real_r / k
+                3*i.real_r / k
             )
 
     def move(self):

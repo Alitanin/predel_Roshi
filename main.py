@@ -29,11 +29,11 @@ balls = []
 button_point = Button_Point(screen, 100, 600, 90, 24, 'make mark', CYAN)
 clock = pygame.time.Clock()
 
-sputnic = Sputnic(screen, R=58*10**6, x=400, y=150, m=2*10**26, vx=4.8*10**4)
+sputnic = Sputnic(screen, R=1.7*10**6, x=400, y=204, m=7.4*10**22, vx=6.46*10**3)
 balls.append(sputnic)
 
-center = Ball(screen, x=400, y=300, m=10**29, R=7*10**6)
-center.color = YELLOW
+center = Ball(screen, x=400, y=300, m=6*10**24, R=6.4*10**6)
+center.color = GREEN
 center.center = 1
 balls.append(center)
 finished = False
@@ -52,7 +52,7 @@ while not finished:
         b.draw()
     button_point.draw()
     pygame.display.update()
-    for i in range(10 ** 2):
+    for i in range(7*10 ** 2):
         time += dt
         for b in balls:
             b.gravitation(balls)
